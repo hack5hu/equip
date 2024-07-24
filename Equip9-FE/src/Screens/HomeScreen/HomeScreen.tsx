@@ -9,12 +9,14 @@ import {
   Animated,
   Easing,
   Alert,
+  Platform,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {setIsLogin, setUserDetails} from '../../Redux/Reducers';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {dataManagerApiRequest} from '../../DataManager/dataManager';
 import {theme} from '../../Theme/Theme';
+import { getIndianTime } from '../../Helper/helper';
 
 type Props = {};
 
@@ -35,7 +37,7 @@ const HomeScreen: React.FC<Props> = () => {
   }, [userDetails]);
 
   const handleGreeting = async () => {
-    const hours = new Date().getUTCHours();
+    const hours = getIndianTime();
     let greetingMessage = '';
 
     if (hours < 12) {
@@ -46,11 +48,11 @@ const HomeScreen: React.FC<Props> = () => {
       greetingMessage = 'Good Evening';
     }
 
-    const fullName = await userDetails?.user
+    const fullName = (await userDetails?.user)
       ? `${userDetails?.user?.firstName} ${userDetails?.user?.lastName || ''}`
       : 'User';
     typeGreeting(greetingMessage, fullName);
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   const typeGreeting = (greetingMessage: string, fullName: string) => {
@@ -89,16 +91,18 @@ const HomeScreen: React.FC<Props> = () => {
       const response = await dataManagerApiRequest({
         method: 'POST',
         apiPath: 'logout',
-        params: {userId: userDetails.user.id},
+        params: {userId: userDetails?.user?.id},
         headers: {
           'Content-Type': 'application/json',
-          'x-access-token': `${userDetails.token}`,
+          'x-access-token': `${userDetails?.token}`,
         },
       });
       console.log(response, 'here');
       if (response?.status) {
         dispatch(setIsLogin(false));
         dispatch(setUserDetails(''));
+      } else if (response === 'Network Error') {
+        Alert.alert(response);
       } else {
         Alert.alert(response?.message);
       }
@@ -174,6 +178,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.lightWhite,
+    // paddingTop:36
   },
   innerContainer: {
     flex: 1,
@@ -188,9 +193,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 56,
+    height: 60,
     marginBottom: 16,
-    paddingHorizontal: 16,
+    paddingHorizontal: Platform.OS === 'ios' ? 16 : 24,
     backgroundColor: theme.lightBlue,
     shadowColor: theme.white,
     shadowOffset: {width: 0, height: 4},
@@ -259,7 +264,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.lightBlue,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    borderRadius: 8,
   },
 });
-

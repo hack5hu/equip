@@ -1,14 +1,14 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { baseUrl } from '../Constants/ConstantValues';
-import { Alert } from 'react-native';
+import axios, {AxiosRequestConfig} from 'axios';
+import {baseUrl} from '../Constants/ConstantValues';
+import {Alert} from 'react-native';
 
 interface ApiRequest {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' ; 
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   apiPath: string;
-  data?: object; 
-  headers?: object; 
-  params?: object; 
-  timeout?: number; 
+  data?: object;
+  headers?: object;
+  params?: object;
+  timeout?: number;
 }
 
 export const dataManagerApiRequest = async ({
@@ -19,7 +19,6 @@ export const dataManagerApiRequest = async ({
   params = {},
   timeout = 10000,
 }: ApiRequest) => {
-
   const url = `${baseUrl}${apiPath}`;
   const config: AxiosRequestConfig = {
     method: method,
@@ -35,7 +34,11 @@ export const dataManagerApiRequest = async ({
     const response = await axios.request(config);
     return response?.data;
   } catch (error) {
-    // Alert.alert('An error occurred:', error?.response?.data.message);
-    return error?.response?.data;
+    console.log('Error Details:', {
+      message: error.message,
+      response: error.response,
+      stack: error.stack,
+    });
+    return error.response?.data || error?.message || 'Unknown error';
   }
 };

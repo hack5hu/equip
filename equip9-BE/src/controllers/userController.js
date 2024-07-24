@@ -69,7 +69,7 @@ exports.loginUser = async (req, res) => {
         console.log(passwordIsValid);
         if (passwordIsValid) {
           const token = jwt.sign({ id: user.id }, secretKey, {
-            expiresIn: 86400, // 24 hours
+            expiresIn: 1296000, 
           });
 
           return res.status(200).send({
@@ -130,4 +130,5 @@ exports.logoutUser = async (req, res) => {
     });
   }
 };
+
 

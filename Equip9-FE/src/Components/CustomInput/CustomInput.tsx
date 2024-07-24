@@ -68,7 +68,6 @@ const CustomTextInput = ({
                 <TextInput
                   testID={testID}
                   onChangeText={(text: any) => {
-                    console.log('12343546')
                     onChange(text);
                   }}
                   keyboardType={numeric ? 'number-pad': 'default'}

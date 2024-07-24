@@ -7,6 +7,7 @@ import {Provider} from 'react-redux';
 import {store, persister} from './src/Redux/Store';
 import {PersistGate} from 'redux-persist/integration/react';
 import RegisterScreen from './src/Screens/registerScreen/RegisterScreen';
+import { theme } from './src/Theme/Theme';
 
 function App(): React.JSX.Element {
   // LogBox.ignoreAllLogs();
@@ -17,7 +18,7 @@ function App(): React.JSX.Element {
         <PersistGate persistor={persister}>
           <NavigationContainer>
             <StatusBar
-              backgroundColor="#fff"
+              backgroundColor={theme.lightBlue}
               barStyle="dark-content"
               animated={true}
             />

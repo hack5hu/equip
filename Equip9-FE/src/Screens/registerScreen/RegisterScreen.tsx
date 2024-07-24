@@ -7,6 +7,7 @@ import {
   View,
   ScrollView,
   Alert,
+  Platform,
 } from 'react-native';
 import CustomTextInput from '../../Components/CustomInput/CustomInput';
 import {useForm, SubmitHandler} from 'react-hook-form';
@@ -46,9 +47,10 @@ const RegisterScreen: React.FC<LoginScreenProps> = ({navigation}) => {
   });
   const {navigate} = navigation;
   const onValid: SubmitHandler<FormData> = async () => {
-    setIsLoading(true);
+    
     const {firstName, lastName, mobileNumber, password} = getValues();
     if (isChecked) {
+      setIsLoading(true);
       const data = {
         firstName: firstName,
         lastName: lastName,
@@ -57,24 +59,26 @@ const RegisterScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         createdBy: 'system_admin',
         updatedBy: 'system_admin',
       };
-
+      console.log(data)
       try {
         const response = await dataManagerApiRequest({
           method: 'POST',
           apiPath: 'register',
           data: data,
         });
+        console.log("response",response);
         if (response?.error === 'ER_DUP_ENTRY') {
           setIsLoading(false);
           setError('mobileNumber', {
             type: 'manual',
             message: response?.message,
           });
+          console.log(response)
         } else if (!response?.status) {
-          Alert.alert('An error occurred:', response?.message);
+          Alert.alert('An error occurred:', response?.message );
           setIsLoading(false);
         } else {
-          Alert.alert(response?.message)
+          // Alert.alert(response?.message)
           setIsLoading(false);
           navigate('Login');
         }
@@ -83,6 +87,7 @@ const RegisterScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         Alert.alert(error);
       }
     } else {
+      setIsLoading(false);
       setCheckBoxError('Please Click on the Term & Condition');
     }
   };
@@ -130,7 +135,6 @@ const RegisterScreen: React.FC<LoginScreenProps> = ({navigation}) => {
       required
       password
       isLabel
-      numeric
       rules={passwordValidation}
     />
   );
@@ -171,7 +175,9 @@ const RegisterScreen: React.FC<LoginScreenProps> = ({navigation}) => {
           <Text style={styles.header2}>Hello!</Text>
           <Text style={styles.smallHeader}>Signup to get Started</Text>
         </View>
-        <ScrollView contentContainerStyle={styles.formContentContainer}>
+        <ScrollView
+          contentContainerStyle={styles.formContentContainer}
+          showsVerticalScrollIndicator={false}>
           {__firstName()}
           {__lastName()}
           {__mobileNumber()}
@@ -214,6 +220,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.white,
+    paddingTop: 30,
   },
   innerContainer: {
     flex: 1,
@@ -252,7 +259,7 @@ const styles = StyleSheet.create({
     gap: 4,
     justifyContent: 'space-between',
     alignItems: 'center',
-    margin:3
+    marginHorizontal: Platform.OS === 'ios' ? 3 : -6,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -269,7 +276,7 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     letterSpacing: 0.12,
     color: theme.lightBlue,
-    marginLeft: 6,
+    marginLeft: Platform.OS === 'ios' ? 8 : 12,
   },
   orContainer: {
     height: 21,

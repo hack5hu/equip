@@ -1,4 +1,6 @@
 import {
+  Alert,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -60,7 +62,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         setIsLoading(false);
         dispatch(setIsLogin(true));
         dispatch(setUserDetails(result));
-      } else {
+      } else if( result==='Network Error')
+      {
+        Alert.alert('An error occurred:', result);
+        setIsLoading(false);
+      }
+      else {
         setIsLoading(false);
         setError('mobileNumber', {
           type: 'manual',
@@ -72,6 +79,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         });
       }
     } else {
+      setIsLoading(false);
       setCheckBoxError('Please Click on the Term & Condition');
     }
   };
@@ -129,7 +137,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
             Welcome back, you’ve been missed
           </Text>
         </View>
-        <ScrollView style={styles.formContainer}>
+        <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
           {__mobileNumber()}
           {__passwordField()}
           <View style={styles.checkboxMainContainer}>
@@ -173,6 +181,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.white,
+    paddingTop: 36,
   },
   innerContainer: {
     marginHorizontal: 24,
@@ -217,7 +226,7 @@ const styles = StyleSheet.create({
     gap: 4,
     justifyContent: 'space-between',
     alignItems: 'center',
-    margin: 3,
+    marginHorizontal: Platform.OS === 'ios' ? 3 : -6,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -234,7 +243,7 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     letterSpacing: 0.12,
     color: theme.lightBlue,
-    marginLeft: 6,
+    marginLeft: Platform.OS === 'ios' ? 6 : 12,
   },
   forgetText: {
     fontWeight: '400',
